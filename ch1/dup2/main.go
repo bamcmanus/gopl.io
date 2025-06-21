@@ -11,11 +11,13 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 )
 
 func main() {
-	counts := make(map[string]int)
+	counts := make(map[string][]string)
 	files := os.Args[1:]
 	if len(files) == 0 {
 		countLines(os.Stdin, counts)
@@ -30,19 +32,24 @@ func main() {
 			f.Close()
 		}
 	}
-	for line, n := range counts {
-		if n > 1 {
-			fmt.Printf("%d\t%s\n", n, line)
+	for _, files := range counts {
+		if len(files) > 1 {
+			fmt.Println(strings.Join(files, " "))
 		}
 	}
 }
 
-func countLines(f *os.File, counts map[string]int) {
+func countLines(f *os.File, lineCounts map[string][]string) {
 	input := bufio.NewScanner(f)
 	for input.Scan() {
-		counts[input.Text()]++
+		text := input.Text()
+		if _, ok := lineCounts[text]; !ok {
+			lineCounts[text] = []string{}
+		}
+		lineCounts[text] = append(lineCounts[text], f.Name())
 	}
-	// NOTE: ignoring potential errors from input.Err()
+	if input.Err() != nil {
+		log.Fatalln("input failed to scan")
+	}
 }
 
-//!-
