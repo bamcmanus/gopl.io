@@ -10,15 +10,25 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
+	"time"
 )
 
 func main() {
-	var s, sep string
-	for i := 1; i < len(os.Args); i++ {
-		s += sep + os.Args[i]
-		sep = " "
+	start := time.Now()
+	var s string
+	sep := " "
+	for i := 0; i < len(os.Args); i++ {
+		//fmt.Printf("index: %d; value: %q\n", i, os.Args[i])
+		s += os.Args[i] + sep
 	}
 	fmt.Println(s)
+	fmt.Printf("dumb for loop took %dns\n", time.Since(start).Nanoseconds())
+
+	start = time.Now()
+	fmt.Println(strings.Join(os.Args, " "))
+	fmt.Printf("join took %dns\n", time.Since(start).Nanoseconds())
+
 }
 
 //!-
